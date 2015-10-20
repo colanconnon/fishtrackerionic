@@ -1,0 +1,26 @@
+<ion-view view-title="Fish Catches">
+  <ion-content style="background-color:#bbb;">
+    <!-- <ul class="list">
+      <li class="item item-icon-right" ng-repeat="playlist in playlists">
+        {{playlist.title}}
+        <i class="icon ion-arrow-right-c">
+        </i>
+      </li>
+    </ul>
+    </div> -->
+    <div style="margin-top: 20px;"> </div>
+    <div class="card" style="margin-top: -14px;" ng-repeat="fishcatch in fishcatches">
+      <div  style="background-color: #fff;"class="item item-text-wrap">
+        <h2>Lake: {{fishcatch.lakename}} </h2>
+        <p>Latitude: </p>
+        <p>Longitude </p>
+        <p>Time: </p>
+        <a style="margin-top:5px;" class="button button-dark" href="#/app/fishcatchdetail">
+          View more details
+        </a>
+      </div>
+
+    </div>
+
+  </ion-content>
+</ion-view>
