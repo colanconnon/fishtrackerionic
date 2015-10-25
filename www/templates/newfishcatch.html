@@ -1,4 +1,9 @@
-<ion-view  view-title="New Fish Catch">>
+<ion-view  view-title="New Fish Catch">
+    <style>
+        .item {
+            border: 0px;
+        }
+    </style>
   <ion-content>
     <h1 style="padding:20px; text-align:center;"> New Fish Catch </h1>
     <form>
@@ -9,7 +14,7 @@
         </label>
         <label class="item item-input item-stacked-label">
           <span class="input-label">Details</span>
-          <input type="text" placeholder="Enter details" ng-model="newfishcatchdata.textarea" />
+          <input type="text" placeholder="Enter details" ng-model="newfishcatchdata.details" />
         </label>
         <label class="item item-input item-stacked-label">
           <span class="input-label">Longitude</span>
@@ -19,11 +24,16 @@
           <span class="input-label">Latitude</span>
           <input type="text" placeholder="Latitude" ng-model="newfishcatchdata.latitude">
         </label>
-        <label class="item item-input">
-          <input style="margin-top: 10px;" type="file" accept="image/*">
-        </label>
+          <label class="item item-input item-select">
+              <span class="input-label">
+                  Pick a lake
+              </span>
+              <select ng-model="newfishcatchdata.LakeId">
+                  <option ng-repeat="lake in lakes" value="{{lake.Id}}">{{lake.name}}</option>
+              </select>
+          </label>
         <label class="item">
-          <button class="button button-block button-dark" type="submit">Submit Catch</button>
+          <button ng-click="newCatchSubmit()" class="button button-block button-dark" type="submit">Submit Catch</button>
         </label>
       </div>
     </form>

@@ -32,7 +32,8 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
 
 }).controller('loginCtrl', function($scope, $ionicPopup, $location, $http) {
-  $scope.loginData = {};
+    $scope.loginData = {};
+    $http.defaults.useXDomain = true;
   $scope.doLogin = function($event) {
     var req = {
       "method": "POST",
@@ -83,25 +84,43 @@ angular.module('starter.controllers', [])
 .controller('fishCatchesCtrl', function($scope,$http,$location) {
     if (localStorage.getItem("Token") === null) {
       $location.path("/app/login");
+
     }
+    $http.useXDomain = true;
     var req = {
-      "method": "GET",
+        "method": "GET",
+        "url": "http://71.72.219.85:8081/api/FishCatchApi/getFishCatches",
       "headers": {'Content-Type': 'application/json',
-      "Authorization": "Bearer: " + localStorage.getItem("Token")},
-      crossDomain : true,
-      "url": "http://71.72.219.85:8081/api/FishCatchApi/getFishCatches"
+      "Authorization": "Bearer " + localStorage.getItem("Token")},
+      crossDomain : true
+     
 
     };
     $http(req).then(function(data){
-      console.log(JSON.stringify(data));
+        $scope.fishcatches = data.data.fishCatches;
+        console.log(JSON.stringify($scope.fishcatches));
     });
 
-    $scope.fishcatches= [{
-      lakename: "Patoka Lake"
-    }];
+   
   })
-  .controller('newfishcatchCtrl', function($scope, $ionicLoading) {
-    $scope.newfishcatchdata = {};
+  .controller('newfishcatchCtrl', function($scope, $ionicLoading, $http,$ionicPopup) {
+      $scope.newfishcatchdata = {};
+      var req = {
+          "method": "GET",
+          "url": "http://71.72.219.85:8081/api/LakeApi/getLakes",
+          "headers": {
+              'Content-Type': 'application/json',
+              "Authorization": "Bearer " + localStorage.getItem("Token")
+          },
+          crossDomain: true
+
+
+      };
+      $http(req).then(function (data) {
+          console.log(data.data);
+          $scope.lakes = data.data.lakes;
+          console.log(JSON.stringify($scope.lakes));
+      });
 
     $ionicLoading.show({
       template: 'Loading...'
@@ -121,34 +140,73 @@ angular.module('starter.controllers', [])
       $ionicLoading.hide();
     }
 
+    $scope.newCatchSubmit = function () {
+        $ionicLoading.show({
+            template: 'Processing Save...'
+        });
+        console.log(JSON.stringify($scope.newfishcatchdata));
+        var req = {
+            "method": "POST",
+            "url": "http://71.72.219.85:8081/api/FishCatchApi/NewFishCatch/",
+            "headers": {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + localStorage.getItem("Token")
+            },
+            crossDomain: true,
+            data: $scope.newfishcatchdata
+        };
+        $http(req).then(function (data) {
+            console.log(data);
+            $ionicLoading.hide();
+            var alertPopup = $ionicPopup.alert({
+                title: 'Success',
+                template: "Your fish catch has been saved."
+            });
+            alertPopup.then(function (res) {
+                console.log(res);
+            });
+        });
+    }
+  })
+  .controller('fishcatchdetailCtrl', function ($scope,$location, $http) {
+      var fishCatchId = $location.search().fishCatchId;
+      console.log(fishCatchId);
+      $http.useXDomain = true;
+      var req = {
+          "method": "GET",
+          "url": "http://71.72.219.85:8081/api/FishCatchApi/getFishCatch?fishCatchId="+fishCatchId,
+          "headers": {
+              'Content-Type': 'application/json',
+              "Authorization": "Bearer " + localStorage.getItem("Token")
+          },
+          crossDomain: true
+
+
+      };
+      $http(req).then(function (data) {
+          console.log(JSON.stringify(data.data));
+          $scope.fishcatch = data.data;
+      });
 
   })
-  .controller('fishcatchdetailCtrl', function($scope){
-    $scope.fishcatch = {
-      "lakename": "Patoka",
-      "longitude": 39.12222,
-      "detail": "This is a great catch, caught it on a crank bait 10 feet deep",
-      "latitude": -84.1234
-    };
-  })
-  .controller('lakesCtrl',function($scope){
-    $scope.lakes = [{
-      "lakename": "Patoka"
-    },{
-      "lakename": "Patoka"
-    },
-    {
-      "lakename": "Patoka"
-    },
-    {
-      "lakename": "Patoka"
-    },
-    {
-      "lakename": "Patoka"
-    },
-    {
-      "lakename": "Patoka"
-    }];
+  .controller('lakesCtrl',function($scope, $http){
+      var req = {
+          "method": "GET",
+          "url": "http://71.72.219.85:8081/api/LakeApi/getLakes",
+          "headers": {
+              'Content-Type': 'application/json',
+              "Authorization": "Bearer " + localStorage.getItem("Token")
+          },
+          crossDomain: true
+
+
+      };
+      $http(req).then(function (data) {
+          console.log(data.data);
+          $scope.lakes = data.data.lakes;
+          console.log(JSON.stringify($scope.lakes));
+      });
+
   })
   .controller('newlakeCtrl', function($scope){
     $scope.lakedata = {};
