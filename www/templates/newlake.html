@@ -1,14 +1,19 @@
 <ion-view  view-title="New Lake">
+    <style>
+        .item {
+            border: 0px;
+        }
+    </style>
   <ion-content>
     <h1 style="padding:20px; text-align:center;"> New Lake</h1>
     <form>
       <div class="list">
         <label class="item item-input item-stacked-label">
           <span class="input-label">Lake name</span>
-          <input type="text" placeholder="Lake Name" ng-model="lakedata.lakename">
+          <input type="text" placeholder="Lake Name" ng-model="lakedata.name">
         </label>
         <label class="item">
-          <button class="button button-block button-dark" type="submit">Submit Lake</button>
+          <button ng-click="newLakeSubmit()" class="button button-block button-dark" type="submit">Submit Lake</button>
         </label>
 
       </div>

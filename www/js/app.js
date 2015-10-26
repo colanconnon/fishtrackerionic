@@ -82,7 +82,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       }
     })
     .state('app.lakes', {
-      url: '/lakes',
+        url: '/lakes',
+        cache: false,
       views: {
         'menuContent': {
           templateUrl: 'templates/lakes.html',

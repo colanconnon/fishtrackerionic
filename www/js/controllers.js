@@ -103,7 +103,7 @@ angular.module('starter.controllers', [])
 
    
   })
-  .controller('newfishcatchCtrl', function($scope, $ionicLoading, $http,$ionicPopup) {
+  .controller('newfishcatchCtrl', function($scope, $ionicLoading, $http,$ionicPopup,$location) {
       $scope.newfishcatchdata = {};
       var req = {
           "method": "GET",
@@ -164,6 +164,17 @@ angular.module('starter.controllers', [])
             });
             alertPopup.then(function (res) {
                 console.log(res);
+                $location.path("/app/fishCatches");
+            });
+        }, function (data)
+        {
+            $ionicLoading.hide();
+            var alertPopup = $ionicPopup.alert({
+                title: 'Error',
+                template: "Error saving the catch, please check all fields and try again"
+            });
+            alertPopup.then(function (res) {
+                console.log(res);
             });
         });
     }
@@ -189,7 +200,7 @@ angular.module('starter.controllers', [])
       });
 
   })
-  .controller('lakesCtrl',function($scope, $http){
+  .controller('lakesCtrl', function ($scope, $http) {
       var req = {
           "method": "GET",
           "url": "http://71.72.219.85:8081/api/LakeApi/getLakes",
@@ -208,8 +219,39 @@ angular.module('starter.controllers', [])
       });
 
   })
-  .controller('newlakeCtrl', function($scope){
-    $scope.lakedata = {};
+  .controller('newlakeCtrl', function ($scope, $http, $ionicPopup, $state, $ionicHistory) {
+      $scope.lakedata = {};
+      $scope.newLakeSubmit = function () {
+          console.log($scope.lakedata);
+          var req = {
+              "method": "POST",
+              "url": "http://71.72.219.85:8081/api/LakeApi/PostLake",
+              "headers": {
+                  'Content-Type': 'application/json',
+                  "Authorization": "Bearer " + localStorage.getItem("Token")
+              },
+              crossDomain: true,
+              data: $scope.lakedata
+          };
+
+          $http(req).then(function (data) {
+              console.log(data);
+              var alertPopup = $ionicPopup.alert({
+                  title: 'Success',
+                  template: "Your lake has been saved."
+              });
+              $ionicHistory.nextViewOptions({
+                  disableBack: true
+              });
+              alertPopup.then(function (res) {
+                  console.log(res);
+                
+
+                  $state.go("app.lakes");
+              });
+          });
+      };
+    
   })
   .controller('signupCtrl', function($scope){
 
