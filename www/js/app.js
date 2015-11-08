@@ -54,6 +54,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
+    .state('logout',{
+      url: '/logout',
+      views:{
+        'menuContent': {
+          controller: 'logoutCtrl',
+          templateUrl: 'templates/logout.html'
+        }
+      }
+    })
     .state('app.fishCatches', {
       url: '/fishCatches',
       views: {

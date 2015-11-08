@@ -97,7 +97,10 @@ angular.module('starter.controllers', [])
 
    
   })
-  .controller('newfishcatchCtrl', function($scope, $ionicLoading,$ionicHistory, $http,$ionicPopup,$state) {
+  .controller('newfishcatchCtrl', function($scope, $ionicLoading,$ionicHistory, $http,$ionicPopup,$state, $location) {
+     if (localStorage.getItem("Token") === null) {
+      $location.path("/app/login");
+    }
       $scope.newfishcatchdata = {};
       var req = {
           "method": "GET",
@@ -157,7 +160,6 @@ angular.module('starter.controllers', [])
       };
      
       $http(req).then(function (data) {
-        console.log(data);
         $ionicLoading.hide();
         $ionicHistory.nextViewOptions({
           disableBack: true
@@ -183,6 +185,9 @@ angular.module('starter.controllers', [])
     };
   })
   .controller('fishcatchdetailCtrl', function ($scope,$location, $http) {
+     if (localStorage.getItem("Token") === null) {
+      $location.path("/app/login");
+    }
       var fishCatchId = $location.search().fishCatchId;
       console.log(fishCatchId);
       $http.useXDomain = true;
@@ -222,7 +227,10 @@ angular.module('starter.controllers', [])
       });
 
   })
-  .controller('newlakeCtrl', function ($scope, $http, $ionicPopup, $state, $ionicHistory) {
+  .controller('newlakeCtrl', function ($scope, $http, $ionicPopup, $state, $ionicHistory,$location) {
+     if (localStorage.getItem("Token") === null) {
+      $location.path("/app/login");
+    }
       $scope.lakedata = {};
       $scope.newLakeSubmit = function () {
           console.log($scope.lakedata);
@@ -256,7 +264,7 @@ angular.module('starter.controllers', [])
       };
     
   })
-  .controller('signupCtrl', function($scope,$http, $ionicPopup,$state){
+  .controller('signupCtrl', function($scope,$http, $ionicPopup,$state, $location){
     $scope.registerdata = {};
     $scope.registerClick = function() {
       if ($scope.confirmPassword === $scope.password) {
@@ -295,6 +303,13 @@ angular.module('starter.controllers', [])
       }
 
     };
+    $scope.goToLogin  = function() {
+       $state.go("login");
+    }
+  })
+  .controller('logoutCtrl',function($state){
+      localStorage.setItem("Token", null);
+      $state.go("login");
   })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {});
