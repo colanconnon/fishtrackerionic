@@ -32,41 +32,34 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
 
 }).controller('loginCtrl', function($scope, $ionicPopup, $location, $http) {
-    $scope.loginData = {};
-    $http.defaults.useXDomain = true;
-  $scope.doLogin = function($event) {
+   $scope.loginData = {};
+   $scope.doLogin = function($event) {
     var req = {
-      "method": "POST",
-      "headers": {'Content-Type': 'application/x-www-form-urlencoded'},
-      "url": "http://71.72.219.85:8081/Authenticate",
-      crossDomain : true,
-      transformRequest: function(obj) {
-        var str = [];
-        for(var p in obj)
-        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-        return str.join("&");
-    },
+      method: 'POST',
+        url: 'http://localhost:3001/api/users/Token',
+        headers: {
+          'Content-Type': 'Application/json'
+        },
       "data":{
         "username": $scope.loginData.username,
-        "password": $scope.loginData.password,
-        "grant_type": "password"
+        "password": $scope.loginData.password
       }
-
+    
     };
     console.log(JSON.stringify($scope.loginData));
     $http(req).then(function(data){
-      console.log(JSON.stringify(data.data.access_token));
-      if (data.data.access_token === null || data.data.access_token === undefined) {
-        var alertPopup = $ionicPopup.alert({
+      if (data.data.token) {
+        localStorage.setItem("Token", data.data.token);
+        $location.path("/app/fishCatches");
+      } else {
+          var alertPopup = $ionicPopup.alert({
           title: 'Incorrect username or password!',
           template: 'Please try again.'
         });
         alertPopup.then(function(res) {
           console.log(res);
         });
-      } else {
-        localStorage.setItem("Token", data.data.access_token);
-        $location.path("/app/fishCatches");
+    
       }
     },function(err){
       var alertPopup = $ionicPopup.alert({
@@ -77,8 +70,9 @@ angular.module('starter.controllers', [])
         console.log(res);
       });
     });
+    
+    };
 
-  };
 })
 
 .controller('fishCatchesCtrl', function($scope,$http,$location) {
@@ -89,7 +83,7 @@ angular.module('starter.controllers', [])
     $http.useXDomain = true;
     var req = {
         "method": "GET",
-        "url": "http://71.72.219.85:8081/api/FishCatchApi/getFishCatches",
+        "url": "http://localhost:3001/api/fishcatch/",
       "headers": {'Content-Type': 'application/json',
       "Authorization": "Bearer " + localStorage.getItem("Token")},
       crossDomain : true
@@ -103,11 +97,11 @@ angular.module('starter.controllers', [])
 
    
   })
-  .controller('newfishcatchCtrl', function($scope, $ionicLoading, $http,$ionicPopup,$location) {
+  .controller('newfishcatchCtrl', function($scope, $ionicLoading,$ionicHistory, $http,$ionicPopup,$state) {
       $scope.newfishcatchdata = {};
       var req = {
           "method": "GET",
-          "url": "http://71.72.219.85:8081/api/LakeApi/getLakes",
+          "url": "http://localhost:3001/api/lake/",
           "headers": {
               'Content-Type': 'application/json',
               "Authorization": "Bearer " + localStorage.getItem("Token")
@@ -141,43 +135,52 @@ angular.module('starter.controllers', [])
     }
 
     $scope.newCatchSubmit = function () {
-        $ionicLoading.show({
-            template: 'Processing Save...'
+      $ionicLoading.show({
+        template: 'Processing Save...'
+      });
+      console.log(JSON.stringify($scope.newfishcatchdata));
+      var req = {
+        "method": "POST",
+        "url": "http://localhost:3001/api/fishcatch/",
+        "headers": {
+          'Content-Type': 'application/json',
+          "Authorization": "Bearer " + localStorage.getItem("Token")
+        },
+        crossDomain: true,
+        data: {
+              temperature: $scope.newfishcatchdata.temperature,
+          longitude: $scope.newfishcatchdata.longitude,
+          latitude: $scope.newfishcatchdata.latitude,
+          lake: $scope.newfishcatchdata.lake,
+          details: $scope.newfishcatchdata.details
+        } 
+      };
+     
+      $http(req).then(function (data) {
+        console.log(data);
+        $ionicLoading.hide();
+        $ionicHistory.nextViewOptions({
+          disableBack: true
         });
-        console.log(JSON.stringify($scope.newfishcatchdata));
-        var req = {
-            "method": "POST",
-            "url": "http://71.72.219.85:8081/api/FishCatchApi/NewFishCatch/",
-            "headers": {
-                'Content-Type': 'application/json',
-                "Authorization": "Bearer " + localStorage.getItem("Token")
-            },
-            crossDomain: true,
-            data: $scope.newfishcatchdata
-        };
-        $http(req).then(function (data) {
-            console.log(data);
-            $ionicLoading.hide();
-            var alertPopup = $ionicPopup.alert({
-                title: 'Success',
-                template: "Your fish catch has been saved."
-            });
-            alertPopup.then(function (res) {
-                console.log(res);
-                $location.path("/app/fishCatches");
-            });
-        }, function (data)
-        {
-            $ionicLoading.hide();
-            var alertPopup = $ionicPopup.alert({
-                title: 'Error',
-                template: "Error saving the catch, please check all fields and try again"
-            });
-            alertPopup.then(function (res) {
-                console.log(res);
-            });
+        var alertPopup = $ionicPopup.alert({
+          title: 'Success',
+          template: "Your fish catch has been saved."
         });
-    }
+        alertPopup.then(function (res) {
+          console.log(res);
+          $state.go("app.fishCatches");
+        });
+      }, function (data) {
+          $ionicLoading.hide();
+          var alertPopup = $ionicPopup.alert({
+            title: 'Error',
+            template: "Error saving the catch, please check all fields and try again"
+          });
+          alertPopup.then(function (res) {
+            console.log(res);
+          });
+        });
+    };
   })
   .controller('fishcatchdetailCtrl', function ($scope,$location, $http) {
       var fishCatchId = $location.search().fishCatchId;
@@ -185,25 +188,25 @@ angular.module('starter.controllers', [])
       $http.useXDomain = true;
       var req = {
           "method": "GET",
-          "url": "http://71.72.219.85:8081/api/FishCatchApi/getFishCatch?fishCatchId="+fishCatchId,
+          "url": "http://localhost:3001/api/fishcatch/catchdetail/"+fishCatchId,
           "headers": {
               'Content-Type': 'application/json',
-              "Authorization": "Bearer " + localStorage.getItem("Token")
-          },
-          crossDomain: true
+              "Authorization": "Bearer: " + localStorage.getItem("Token")
+          }
+          
 
 
       };
       $http(req).then(function (data) {
           console.log(JSON.stringify(data.data));
-          $scope.fishcatch = data.data;
+          $scope.fishcatch = data.data.fishcatch;
       });
 
   })
   .controller('lakesCtrl', function ($scope, $http) {
       var req = {
           "method": "GET",
-          "url": "http://71.72.219.85:8081/api/LakeApi/getLakes",
+           "url": "http://localhost:3001/api/lake/",
           "headers": {
               'Content-Type': 'application/json',
               "Authorization": "Bearer " + localStorage.getItem("Token")
@@ -225,13 +228,13 @@ angular.module('starter.controllers', [])
           console.log($scope.lakedata);
           var req = {
               "method": "POST",
-              "url": "http://71.72.219.85:8081/api/LakeApi/PostLake",
+              "url": "http://localhost:3001/api/lake/",
               "headers": {
                   'Content-Type': 'application/json',
                   "Authorization": "Bearer " + localStorage.getItem("Token")
               },
               crossDomain: true,
-              data: $scope.lakedata
+              data: { name: $scope.lakedata.name }
           };
 
           $http(req).then(function (data) {
@@ -253,8 +256,45 @@ angular.module('starter.controllers', [])
       };
     
   })
-  .controller('signupCtrl', function($scope){
+  .controller('signupCtrl', function($scope,$http, $ionicPopup,$state){
+    $scope.registerdata = {};
+    $scope.registerClick = function() {
+      if ($scope.confirmPassword === $scope.password) {
+        var req = {
+          method: 'POST',
+          url: 'http://localhost:3001/api/users/register',
+          headers: {
+            'Content-Type': "Application/json"
+          },
+          data: {
+            username: $scope.registerdata.username,
+            password: $scope.registerdata.password,
+            confirmPassword: $scope.registerdata.confirmPassword
+          }
+        };
+        console.log(req);
+        $http(req).then(function(data) {
+          if (data.data.user) {
+            console.log(data.data.user);
+              var alertPopup = $ionicPopup.alert({
+                  title: 'Saved user',
+                  template: "You are now registered, please login."
+              });
+               alertPopup.then(function (res) {
+                  console.log(res);
+                  $state.go("login");
+              });
+          } else {
+            console.log(data);
+          }
+        }, function() {
+          //error
+        });
+      } else {
+  
+      }
 
+    };
   })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {});

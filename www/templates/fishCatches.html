@@ -11,11 +11,11 @@
     <div style="margin-top: 20px;"> </div>
     <div class="card" style="margin-top: -14px;" ng-repeat="fishcatch in fishcatches">
       <div  style="background-color: #fff;"class="item item-text-wrap">
-        <h2>Lake: {{fishcatch.Lake.name}} </h2>
+        <h2>Lake: {{fishcatch.lake}} </h2>
         <p>Latitude: {{fishcatch.latitude}} </p>
         <p>Longitude: {{fishcatch.longitude}} </p>
-        <p>Time: {{fishcatch.time | date : "medium"}}</p>
-        <a style="margin-top:5px;" class="button button-dark" href="#/app/fishcatchdetail?fishCatchId={{fishcatch.Id}}">
+        <p>Time: {{fishcatch.timeCaught | date : "medium"}}</p>
+        <a style="margin-top:5px;" class="button button-dark" href="#/app/fishcatchdetail?fishCatchId={{fishcatch._id}}">
           View more details
         </a>
       </div>
