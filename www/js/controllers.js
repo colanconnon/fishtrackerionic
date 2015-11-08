@@ -36,7 +36,7 @@ angular.module('starter.controllers', [])
    $scope.doLogin = function($event) {
     var req = {
       method: 'POST',
-        url: 'http://localhost:3001/api/users/Token',
+        url: 'http://71.72.219.85/api/users/Token',
         headers: {
           'Content-Type': 'Application/json'
         },
@@ -83,7 +83,7 @@ angular.module('starter.controllers', [])
     $http.useXDomain = true;
     var req = {
         "method": "GET",
-        "url": "http://localhost:3001/api/fishcatch/",
+        "url": "http://71.72.219.85/api/fishcatch/",
       "headers": {'Content-Type': 'application/json',
       "Authorization": "Bearer " + localStorage.getItem("Token")},
       crossDomain : true
@@ -101,7 +101,7 @@ angular.module('starter.controllers', [])
       $scope.newfishcatchdata = {};
       var req = {
           "method": "GET",
-          "url": "http://localhost:3001/api/lake/",
+          "url": "http://71.72.219.85/api/lake/",
           "headers": {
               'Content-Type': 'application/json',
               "Authorization": "Bearer " + localStorage.getItem("Token")
@@ -141,7 +141,7 @@ angular.module('starter.controllers', [])
       console.log(JSON.stringify($scope.newfishcatchdata));
       var req = {
         "method": "POST",
-        "url": "http://localhost:3001/api/fishcatch/",
+        "url": "http://71.72.219.85/api/fishcatch/",
         "headers": {
           'Content-Type': 'application/json',
           "Authorization": "Bearer " + localStorage.getItem("Token")
@@ -188,7 +188,7 @@ angular.module('starter.controllers', [])
       $http.useXDomain = true;
       var req = {
           "method": "GET",
-          "url": "http://localhost:3001/api/fishcatch/catchdetail/"+fishCatchId,
+          "url": "http://71.72.219.85/api/fishcatch/catchdetail/"+fishCatchId,
           "headers": {
               'Content-Type': 'application/json',
               "Authorization": "Bearer: " + localStorage.getItem("Token")
@@ -206,7 +206,7 @@ angular.module('starter.controllers', [])
   .controller('lakesCtrl', function ($scope, $http) {
       var req = {
           "method": "GET",
-           "url": "http://localhost:3001/api/lake/",
+           "url": "http://71.72.219.85/api/lake/",
           "headers": {
               'Content-Type': 'application/json',
               "Authorization": "Bearer " + localStorage.getItem("Token")
@@ -228,7 +228,7 @@ angular.module('starter.controllers', [])
           console.log($scope.lakedata);
           var req = {
               "method": "POST",
-              "url": "http://localhost:3001/api/lake/",
+              "url": "http://71.72.219.85/api/lake/",
               "headers": {
                   'Content-Type': 'application/json',
                   "Authorization": "Bearer " + localStorage.getItem("Token")
@@ -262,7 +262,7 @@ angular.module('starter.controllers', [])
       if ($scope.confirmPassword === $scope.password) {
         var req = {
           method: 'POST',
-          url: 'http://localhost:3001/api/users/register',
+          url: 'http://71.72.219.85/api/users/register',
           headers: {
             'Content-Type': "Application/json"
           },
