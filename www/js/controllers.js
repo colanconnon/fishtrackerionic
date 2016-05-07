@@ -1,3 +1,4 @@
+var url = "http://23.96.176.134";
 angular.module('starter.controllers', [])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicPopup) {
@@ -31,12 +32,16 @@ angular.module('starter.controllers', [])
 
   // Perform the login action when the user submits the login form
 
-}).controller('loginCtrl', function($scope, $ionicPopup, $location, $http) {
+}).controller('loginCtrl', function($scope, $ionicPopup, $location, $http, $state) {
    $scope.loginData = {};
+   console.log(localStorage.getItem("Token"));
+   if(localStorage.getItem('Token') === null && localStorage.getItem('Token') === undefined) {
+       $state.go("app.fishCatches");
+   }
    $scope.doLogin = function($event) {
     var req = {
       method: 'POST',
-        url: 'http://71.72.219.85/api/users/Token',
+        url: url + ':3001/api/users/Token',
         headers: {
           'Content-Type': 'Application/json'
         },
@@ -46,8 +51,8 @@ angular.module('starter.controllers', [])
       }
     
     };
-    console.log(JSON.stringify($scope.loginData));
     $http(req).then(function(data){
+        console.log(data);
       if (data.data.token) {
         localStorage.setItem("Token", data.data.token);
         $location.path("/app/fishCatches");
@@ -76,14 +81,14 @@ angular.module('starter.controllers', [])
 })
 
 .controller('fishCatchesCtrl', function($scope,$http,$location) {
-    if (localStorage.getItem("Token") === null) {
-      $location.path("/app/login");
-
+    console.log(localStorage.getItem("Token"));
+    if (localStorage.getItem("Token") === null || localStorage.getItem("Token") === undefined) {
+      $location.path("/login");
     }
     $http.useXDomain = true;
     var req = {
         "method": "GET",
-        "url": "http://71.72.219.85/api/fishcatch/",
+        "url": url + ":3001/api/fishcatch/",
       "headers": {'Content-Type': 'application/json',
       "Authorization": "Bearer " + localStorage.getItem("Token")},
       crossDomain : true
@@ -104,7 +109,7 @@ angular.module('starter.controllers', [])
       $scope.newfishcatchdata = {};
       var req = {
           "method": "GET",
-          "url": "http://71.72.219.85/api/lake/",
+          "url": url + ":3001/api/lake/",
           "headers": {
               'Content-Type': 'application/json',
               "Authorization": "Bearer " + localStorage.getItem("Token")
@@ -144,7 +149,7 @@ angular.module('starter.controllers', [])
       console.log(JSON.stringify($scope.newfishcatchdata));
       var req = {
         "method": "POST",
-        "url": "http://71.72.219.85/api/fishcatch/",
+        "url": url + ":3001/api/fishcatch/",
         "headers": {
           'Content-Type': 'application/json',
           "Authorization": "Bearer " + localStorage.getItem("Token")
@@ -170,7 +175,7 @@ angular.module('starter.controllers', [])
         });
         alertPopup.then(function (res) {
           console.log(res);
-          $state.go("app.fishCatches");
+          $state.go("app.fishCatches", {}, { reload: true });
         });
       }, function (data) {
           $ionicLoading.hide();
@@ -193,7 +198,7 @@ angular.module('starter.controllers', [])
       $http.useXDomain = true;
       var req = {
           "method": "GET",
-          "url": "http://71.72.219.85/api/fishcatch/catchdetail/"+fishCatchId,
+          "url": url + ":3001/api/fishcatch/catchdetail/"+fishCatchId,
           "headers": {
               'Content-Type': 'application/json',
               "Authorization": "Bearer: " + localStorage.getItem("Token")
@@ -205,13 +210,26 @@ angular.module('starter.controllers', [])
       $http(req).then(function (data) {
           console.log(JSON.stringify(data.data));
           $scope.fishcatch = data.data.fishcatch;
+           var map;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('mapcanvas'), {
+            center: { lat: $scope.fishcatch.latitude, lng: $scope.fishcatch.longitude },
+            zoom: 15
+            });
+            new google.maps.Marker({
+                position: {lat: $scope.fishcatch.latitude, lng: $scope.fishcatch.longitude},
+                map: map
+            });
+        }
+      initMap();
       });
 
   })
   .controller('lakesCtrl', function ($scope, $http) {
       var req = {
           "method": "GET",
-           "url": "http://71.72.219.85/api/lake/",
+           "url": url + ":3001/api/lake/",
           "headers": {
               'Content-Type': 'application/json',
               "Authorization": "Bearer " + localStorage.getItem("Token")
@@ -236,7 +254,7 @@ angular.module('starter.controllers', [])
           console.log($scope.lakedata);
           var req = {
               "method": "POST",
-              "url": "http://71.72.219.85/api/lake/",
+              "url": url + ":3001/api/lake/",
               "headers": {
                   'Content-Type': 'application/json',
                   "Authorization": "Bearer " + localStorage.getItem("Token")
@@ -270,7 +288,7 @@ angular.module('starter.controllers', [])
       if ($scope.confirmPassword === $scope.password) {
         var req = {
           method: 'POST',
-          url: 'http://71.72.219.85/api/users/register',
+          url: url + ':3001/api/users/register',
           headers: {
             'Content-Type': "Application/json"
           },

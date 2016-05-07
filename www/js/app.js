@@ -56,15 +56,13 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     })
     .state('logout',{
       url: '/logout',
-      views:{
-        'menuContent': {
-          controller: 'logoutCtrl',
-          templateUrl: 'templates/logout.html'
-        }
-      }
+      controller: 'logoutCtrl',
+      templateUrl: 'templates/logout.html'
+  
     })
     .state('app.fishCatches', {
       url: '/fishCatches',
+      cache: false,
       views: {
         'menuContent': {
           templateUrl: 'templates/fishCatches.html',
@@ -74,6 +72,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     })
     .state('app.newfishcatch', {
       url: '/newfishcatch',
+      cache: false,
       views: {
         'menuContent': {
           templateUrl: 'templates/newfishcatch.html',
@@ -120,5 +119,5 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/fishCatches');
+  $urlRouterProvider.otherwise('/login');
 });

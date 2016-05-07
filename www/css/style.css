@@ -1,14 +1,27 @@
 /* Empty. Add your own CSS if you like */
 .item-content{
-  background-color: #444 !important;
+  background-color: #304FFE !important;
 
 }
 
 .list-item-menu{
-  background-color:#444;
+  background-color:#304FFE;
   color:#fff !important;
 }
 
 .list-background{
-  background-color:#444;
+  background-color:#304FFE;
+}
+.item {
+    border-style: none;
+    border-width: 0;
+}
+
+.bar.bar-dark {
+    background-color: #304FFE;
+}
+
+.button.button-dark{
+    background-color: #304FFE;
+    border-color: #304FFE;
 }
